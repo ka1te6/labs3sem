@@ -12,7 +12,7 @@ namespace WeatherLinq
     {
         static async Task Main()
         {
-            string apiKey = "d047da4d32d4128da72dce7dd1a4530f";
+            string apiKey = "...";
             int targetCount = 50;
             int totalRequests = 200;
 
