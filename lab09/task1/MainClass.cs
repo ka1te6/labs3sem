@@ -15,7 +15,7 @@ public class StockPriceAnalyzer
     private readonly string _outputFile;
     private readonly HttpClient _httpClient;
     private readonly SemaphoreSlim _throttler;
-    private readonly object _fileLock = new object();
+    private readonly object _fileLock = new object(); 
     
     private const int MAX_CONCURRENT_REQUESTS = 5;
     private const int DELAY_BETWEEN_REQUESTS_MS = 1000; 
@@ -44,12 +44,9 @@ public class StockPriceAnalyzer
         foreach (var ticker in tickers)
         {
             if (delay > 0)
-            {
                 await Task.Delay(DELAY_BETWEEN_REQUESTS_MS / MAX_CONCURRENT_REQUESTS);
-            }
-            
-            var task = ProcessTickerWithThrottlingAsync(ticker);
-            tasks.Add(task);
+
+            tasks.Add(ProcessTickerWithThrottlingAsync(ticker));
             delay++;
         }
         
@@ -65,7 +62,6 @@ public class StockPriceAnalyzer
         try
         {
             await ProcessTickerAsync(ticker);
-            
             await Task.Delay(DELAY_BETWEEN_REQUESTS_MS);
         }
         finally
@@ -79,18 +75,14 @@ public class StockPriceAnalyzer
         var tickers = new List<string>();
         
         if (!File.Exists(_tickersFile))
-        {
             throw new FileNotFoundException($"Файл с тикерами {_tickersFile} не найден");
-        }
         
         using var reader = new StreamReader(_tickersFile);
         string? line;
         while ((line = await reader.ReadLineAsync()) != null)
         {
             if (!string.IsNullOrWhiteSpace(line))
-            {
                 tickers.Add(line.Trim());
-            }
         }
         
         return tickers;
@@ -112,7 +104,7 @@ public class StockPriceAnalyzer
                     AveragePrice = averagePrice
                 };
                 
-                await SaveResultAsync(stockData);
+                SaveResult(stockData); // 🔒 теперь запись под lock
                 
                 Console.WriteLine($"Обработан тикер: {ticker}, Средняя цена: {averagePrice:F2}");
             }
@@ -141,18 +133,17 @@ public class StockPriceAnalyzer
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var candlesData = JsonSerializer.Deserialize<CandlesResponse>(json);
-                return candlesData;
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-            {
-                Console.WriteLine($"Превышен лимит запросов для {ticker}. Увеличиваем задержку...");
-                await Task.Delay(5000);
-                return null;
+                return JsonSerializer.Deserialize<CandlesResponse>(json);
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 Console.WriteLine($"Тикер {ticker} не найден");
+                return null;
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                Console.WriteLine($"Превышен лимит запросов для {ticker}. Ожидание...");
+                await Task.Delay(5000);
                 return null;
             }
             else
@@ -185,20 +176,12 @@ public class StockPriceAnalyzer
         
         return count > 0 ? sum / count : 0;
     }
-    
-    private async Task SaveResultAsync(StockData stockData)
+
+    private void SaveResult(StockData stockData)
     {
-        await _semaphore.WaitAsync();
-        try
+        lock (_fileLock)
         {
-            await using var writer = new StreamWriter(_outputFile, true, Encoding.UTF8);
-            await writer.WriteLineAsync($"{stockData.Ticker}:{stockData.AveragePrice:F2}");
-        }
-        finally
-        {
-            _semaphore.Release();
+            File.AppendAllText(_outputFile, $"{stockData.Ticker}:{stockData.AveragePrice:F2}{Environment.NewLine}", Encoding.UTF8);
         }
     }
-    
-    private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 }
