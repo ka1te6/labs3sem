@@ -112,11 +112,10 @@ public class StockPriceAnalyzer
 
             db.Stocks.Add(stock);
             await db.SaveChangesAsync();
-
-            // ✅ ДОБАВЛЕНИЕ В Price
+            
             var price = new Price
             {
-                TickerId = stock.Id,        // ссылка на запись Stock
+                TickerId = stock.Id,        
                 PriceValue = averagePrice,
                 Date = DateTime.Now
             };
