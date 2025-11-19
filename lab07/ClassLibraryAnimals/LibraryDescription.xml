@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LibraryDescription>
+  <Type Name="Program" />
+  <Type Name="Animal">
+    <Comment>Абстрактный базовый класс для всех животных</Comment>
+  </Type>
+  <Type Name="CommentAttribute" />
+  <Type Name="Cow">
+    <Comment>Класс, представляющий корову</Comment>
+  </Type>
+  <Type Name="eClassificationAnimal">
+    <Comment>Классификация животных по типу питания</Comment>
+  </Type>
+  <Type Name="eFavoriteFood">
+    <Comment>Любимая еда животных</Comment>
+  </Type>
+  <Type Name="Lion">
+    <Comment>Класс, представляющий льва</Comment>
+  </Type>
+  <Type Name="Pig">
+    <Comment>Класс, представляющий свинью</Comment>
+  </Type>
+</LibraryDescription>
