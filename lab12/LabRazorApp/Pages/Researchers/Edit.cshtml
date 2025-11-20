@@ -1,0 +1,32 @@
+@page
+@model LabRazorApp.Pages.Researchers.EditModel
+
+<h1>Edit Researcher</h1>
+
+<form method="post">
+    <input type="hidden" asp-for="Researcher.Id" />
+
+    <div class="form-group">
+        <label asp-for="Researcher.FullName"></label>
+        <input asp-for="Researcher.FullName" class="form-control" />
+        <span asp-validation-for="Researcher.FullName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Researcher.Position"></label>
+        <input asp-for="Researcher.Position" class="form-control" />
+        <span asp-validation-for="Researcher.Position" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Researcher.Email"></label>
+        <input asp-for="Researcher.Email" class="form-control" />
+        <span asp-validation-for="Researcher.Email" class="text-danger"></span>
+    </div>
+
+    <input type="submit" value="Save" class="btn btn-primary" />
+</form>
+
+<br />
+<a asp-page="Index">Back to List</a>
+

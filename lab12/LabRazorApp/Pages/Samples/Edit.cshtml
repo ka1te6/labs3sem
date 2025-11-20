@@ -1,0 +1,38 @@
+@page
+@model LabRazorApp.Pages.Samples.EditModel
+
+<h1>Edit Sample</h1>
+
+<form method="post">
+    <input type="hidden" asp-for="Sample.Id" />
+
+    <div class="form-group">
+        <label asp-for="Sample.SampleCode"></label>
+        <input asp-for="Sample.SampleCode" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Sample.Type"></label>
+        <input asp-for="Sample.Type" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Sample.CollectedDate"></label>
+        <input asp-for="Sample.CollectedDate" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Sample.Status"></label>
+        <input asp-for="Sample.Status" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Sample.ExperimentId"></label>
+        <select asp-for="Sample.ExperimentId" asp-items="Model.ExperimentsList" class="form-control"></select>
+    </div>
+
+    <input type="submit" value="Save" class="btn btn-primary" />
+</form>
+
+<br />
+<a asp-page="Index">Back</a>

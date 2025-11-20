@@ -1,0 +1,59 @@
+@page
+@model LabRazorApp.Pages.Experiments.CreateModel
+
+        @{
+        ViewData["Title"] = "Create";
+        }
+        
+        <h1>Create</h1>
+        
+    <h4>Experiment</h4>
+    <hr />
+    <div class="row">
+    <div class="col-md-4">
+    <form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Experiment.Title" class="control-label"></label>
+                <input asp-for="Experiment.Title" class="form-control" />
+                <span asp-validation-for="Experiment.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Experiment.Description" class="control-label"></label>
+                <input asp-for="Experiment.Description" class="form-control" />
+                <span asp-validation-for="Experiment.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Experiment.StartDate" class="control-label"></label>
+                <input asp-for="Experiment.StartDate" class="form-control" />
+                <span asp-validation-for="Experiment.StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Experiment.EndDate" class="control-label"></label>
+                <input asp-for="Experiment.EndDate" class="form-control" />
+                <span asp-validation-for="Experiment.EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Experiment.PrincipalInvestigatorId"></label>
+                <select asp-for="Experiment.PrincipalInvestigatorId"
+                        asp-items="Model.ResearchersList"
+                        class="form-control">
+                    <option value="">-- выберите руководителя --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

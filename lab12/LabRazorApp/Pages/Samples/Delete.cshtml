@@ -1,0 +1,31 @@
+@page
+@model LabRazorApp.Pages.Samples.DeleteModel
+
+<h1>Delete Sample</h1>
+
+<h3>Are you sure?</h3>
+
+<div>
+    <h4>@Model.Sample.SampleCode</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Type</dt>
+        <dd class="col-sm-9">@Model.Sample.Type</dd>
+
+        <dt class="col-sm-3">Collected</dt>
+        <dd class="col-sm-9">@Model.Sample.CollectedDate.ToString("yyyy-MM-dd")</dd>
+
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">@Model.Sample.Status</dd>
+
+        <dt class="col-sm-3">Experiment</dt>
+        <dd class="col-sm-9">@Model.Sample.Experiment?.Title</dd>
+    </dl>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="Sample.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
