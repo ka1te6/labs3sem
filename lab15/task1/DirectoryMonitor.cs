@@ -3,9 +3,6 @@ using System.Collections.ObjectModel;
 
 namespace Task1;
 
-/// <summary>
-/// Represents a change detected in the monitored directory.
-/// </summary>
 public record FileChangeEvent(
     FileChangeKind Kind,
     string Path,
@@ -27,9 +24,6 @@ public interface IDirectoryObserver
     void OnDirectoryChanged(FileChangeEvent change);
 }
 
-/// <summary>
-/// Polls a directory on a timer and notifies observers using the Observer pattern.
-/// </summary>
 public sealed class DirectoryMonitor : IDisposable
 {
     private readonly string _path;
@@ -132,17 +126,14 @@ public sealed class DirectoryMonitor : IDisposable
                 }
                 catch (IOException)
                 {
-                    // Skip files that cannot be accessed this moment.
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    // Skip inaccessible files.
                 }
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // Directory not accessible. Return previous snapshot until next run.
         }
 
         return map;

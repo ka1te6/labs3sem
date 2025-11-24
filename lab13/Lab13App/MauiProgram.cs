@@ -1,6 +1,8 @@
 ﻿using Lab13App.Data;
+using Lab13App.Helpers;
 using Lab13App.Pages;
 using Lab13App.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -19,11 +21,12 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
-		var databasePath = Path.Combine(FileSystem.AppDataDirectory, "lab.db");
+		var databasePath = DatabasePathProvider.GetPath();
 		builder.Services.AddDbContextFactory<LabDbContext>(options =>
 			options.UseSqlite($"Data Source={databasePath}"));
 
 		builder.Services.AddSingleton<LabDatabaseService>();
+		builder.Services.AddSingleton<DatabaseInitializer>();
 
 		builder.Services.AddTransient<ResearchersPage>();
 		builder.Services.AddTransient<ExperimentsPage>();
@@ -33,6 +36,15 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		return builder.Build();
+		var app = builder.Build();
+		InitializeDatabase(app.Services);
+		return app;
+	}
+
+	private static void InitializeDatabase(IServiceProvider services)
+	{
+		using var scope = services.CreateScope();
+		var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
+		initializer.InitializeAsync().GetAwaiter().GetResult();
 	}
 }
