@@ -2,59 +2,76 @@
 @model LabRazorApp.Pages.Experiments.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Эксперименты";
 }
 
-<h1>Index</h1>
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Эксперименты</p>
+        <h1 class="mb-1">Каталог экспериментов</h1>
+        <p class="text-muted">Показано @Model.FilteredCount из @Model.TotalCount записей.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap align-items-start">
+        <a class="btn btn-primary" asp-page="Create">Добавить эксперимент</a>
+        <a class="btn btn-outline-secondary" asp-page="/Samples/Index">К образцам</a>
+    </div>
+</div>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Experiment[0].Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Experiment[0].Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Experiment[0].StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Experiment[0].EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Experiment[0].PrincipalInvestigator)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Experiment) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PrincipalInvestigator.FullName)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<form method="get" class="search-panel mb-4">
+    <div class="input-group">
+        <span class="input-group-text">🔍</span>
+        <input type="search"
+               name="search"
+               value="@Model.Search"
+               class="form-control"
+               placeholder="Поиск по названию, описанию или руководителю" />
+        <button class="btn btn-primary" type="submit">Найти</button>
+        @if (!string.IsNullOrWhiteSpace(Model.Search))
+        {
+            <a class="btn btn-outline-secondary" asp-page="./Index">Сбросить</a>
+        }
+    </div>
+</form>
+
+@if (!Model.Experiment.Any())
+{
+    <div class="empty-state">
+        <h4>Записей пока нет</h4>
+        <p class="mb-3">Создайте первый эксперимент, чтобы начать вести электронный журнал.</p>
+        <a class="btn btn-primary" asp-page="Create">Создать эксперимент</a>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="row row-cols-1 row-cols-lg-2 g-4">
+        @foreach (var item in Model.Experiment)
+        {
+            <div class="col">
+                <article class="entity-card h-100">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div>
+                            <h3 class="h5 mb-1">@item.Title</h3>
+                            <p class="entity-meta mb-1">
+                                Руководитель: <strong>@item.PrincipalInvestigator?.FullName</strong>
+                            </p>
+                        </div>
+                        <span class="badge bg-light text-dark">@item.Samples?.Count ?? 0 образцов</span>
+                    </div>
+                    <p class="text-muted mb-2">@item.Description</p>
+                    <p class="entity-meta mb-0">
+                        Старт: @item.StartDate:dd.MM.yyyy
+                        @if (item.EndDate.HasValue)
+                        {
+                            <span> · Завершение: @item.EndDate:dd.MM.yyyy</span>
+                        }
+                    </p>
+                    <div class="mt-3 d-flex flex-wrap gap-2">
+                        <a class="btn btn-sm btn-outline-primary" asp-page="Details" asp-route-id="@item.Id">Подробнее</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-page="Edit" asp-route-id="@item.Id">Изменить</a>
+                        <a class="btn btn-sm btn-outline-danger" asp-page="Delete" asp-route-id="@item.Id">Удалить</a>
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+}

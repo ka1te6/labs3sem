@@ -10,55 +10,61 @@
     <link rel="stylesheet" href="~/LabRazorApp.styles.css" asp-append-version="true" />
 </head>
 <body>
+@{
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
+    string NavClass(string page) => currentPage.StartsWith(page, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">LabRazorApp</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm lab-navbar">
+            <div class="container-xl">
+                <a class="navbar-brand fw-semibold" asp-area="" asp-page="/Index">
+                    <span class="text-accent">Lab</span> Manager
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link @NavClass("/Index")" asp-area="" asp-page="/Index">Главная</a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Experiments/Index">Experiments</a>
+                            <a class="nav-link @NavClass("/Experiments")" asp-area="" asp-page="/Experiments/Index">Эксперименты</a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Researchers/Index">Researchers</a>
+                            <a class="nav-link @NavClass("/Researchers")" asp-area="" asp-page="/Researchers/Index">Исследователи</a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Samples/Index">Samples</a>
+                            <a class="nav-link @NavClass("/Samples")" asp-area="" asp-page="/Samples/Index">Образцы</a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link @NavClass("/Privacy")" asp-area="" asp-page="/Privacy">Политика</a>
                         </li>
-
                     </ul>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a asp-area="" asp-page="/Experiments/Create" class="btn btn-sm btn-light">
+                            + Эксперимент
+                        </a>
+                        <a asp-area="" asp-page="/Samples/Create" class="btn btn-sm btn-outline-light">
+                            + Образец
+                        </a>
+                    </div>
                 </div>
-
             </div>
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="container-xl py-4">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - LabRazorApp -
-            <a asp-area="" asp-page="/Privacy">Privacy</a>
+    <footer class="border-top footer text-muted mt-auto">
+        <div class="container-xl d-flex flex-wrap justify-content-between align-items-center py-3">
+            <span>&copy; 2025 LabRazorApp</span>
+            <small class="text-secondary">MAUI / Razor labs</small>
         </div>
     </footer>
 

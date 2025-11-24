@@ -2,37 +2,65 @@
 @model LabRazorApp.Pages.Researchers.IndexModel
 
 @{
-    ViewData["Title"] = "Researchers";
+    ViewData["Title"] = "Исследователи";
 }
 
-<h1>Researchers</h1>
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Команда</p>
+        <h1 class="mb-1">Исследователи</h1>
+        <p class="text-muted">Показано @Model.FilteredCount из @Model.TotalCount участников.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap align-items-start">
+        <a class="btn btn-primary" asp-page="Create">Добавить исследователя</a>
+        <a class="btn btn-outline-secondary" asp-page="/Experiments/Create">Назначить эксперимент</a>
+    </div>
+</div>
 
-<p>
-    <a asp-page="Create" class="btn btn-primary">Create New</a>
-</p>
+<form method="get" class="search-panel mb-4">
+    <div class="input-group">
+        <span class="input-group-text">🔍</span>
+        <input type="search"
+               name="search"
+               value="@Model.Search"
+               class="form-control"
+               placeholder="Поиск по ФИО, должности или email" />
+        <button class="btn btn-primary" type="submit">Найти</button>
+        @if (!string.IsNullOrWhiteSpace(Model.Search))
+        {
+            <a class="btn btn-outline-secondary" asp-page="./Index">Сбросить</a>
+        }
+    </div>
+</form>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>@Html.DisplayNameFor(m => m.Researchers[0].FullName)</th>
-        <th>@Html.DisplayNameFor(m => m.Researchers[0].Position)</th>
-        <th>@Html.DisplayNameFor(m => m.Researchers[0].Email)</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model.Researchers)
-    {
-        <tr>
-            <td>@item.FullName</td>
-            <td>@item.Position</td>
-            <td>@item.Email</td>
-            <td>
-                <a asp-page="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+@if (!Model.Researchers.Any())
+{
+    <div class="empty-state">
+        <h4>Команда пока не сформирована</h4>
+        <p class="mb-3">Добавьте сотрудников, чтобы назначать ответственных за эксперименты.</p>
+        <a class="btn btn-primary" asp-page="Create">Добавить</a>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        @foreach (var researcher in Model.Researchers)
+        {
+            <div class="col">
+                <article class="entity-card h-100">
+                    <h3 class="h5 mb-1">@researcher.FullName</h3>
+                    <p class="entity-meta mb-1">@researcher.Position ?? "Должность не указана"</p>
+                    <p class="entity-meta mb-3">@researcher.Email ?? "Email не указан"</p>
+                    <span class="badge bg-light text-dark align-self-start mb-3">
+                        @((researcher.Experiments?.Count ?? 0).ToString()) проектов
+                    </span>
+                    <div class="d-flex flex-wrap gap-2 mt-auto">
+                        <a class="btn btn-sm btn-outline-primary" asp-page="Details" asp-route-id="@researcher.Id">Профиль</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-page="Edit" asp-route-id="@researcher.Id">Изменить</a>
+                        <a class="btn btn-sm btn-outline-danger" asp-page="Delete" asp-route-id="@researcher.Id">Удалить</a>
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+}

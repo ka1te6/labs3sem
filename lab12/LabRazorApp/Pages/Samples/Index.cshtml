@@ -2,42 +2,72 @@
 @model LabRazorApp.Pages.Samples.IndexModel
 
 @{
-    ViewData["Title"] = "Samples";
+    ViewData["Title"] = "Образцы";
 }
 
-<h1>Samples</h1>
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Каталог образцов</p>
+        <h1 class="mb-1">Биобанк</h1>
+        <p class="text-muted">Показано @Model.FilteredCount из @Model.TotalCount записей.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap align-items-start">
+        <a class="btn btn-primary" asp-page="Create">Добавить образец</a>
+        <a class="btn btn-outline-secondary" asp-page="/Experiments/Index">Посмотреть эксперименты</a>
+    </div>
+</div>
 
-<p>
-    <a asp-page="Create" class="btn btn-primary">Create New</a>
-</p>
+<form method="get" class="search-panel mb-4">
+    <div class="input-group">
+        <span class="input-group-text">🔍</span>
+        <input type="search"
+               name="search"
+               value="@Model.Search"
+               class="form-control"
+               placeholder="Поиск по коду, типу, статусу или эксперименту" />
+        <button class="btn btn-primary" type="submit">Найти</button>
+        @if (!string.IsNullOrWhiteSpace(Model.Search))
+        {
+            <a class="btn btn-outline-secondary" asp-page="./Index">Сбросить</a>
+        }
+    </div>
+</form>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>@Html.DisplayNameFor(m => m.Samples[0].SampleCode)</th>
-        <th>@Html.DisplayNameFor(m => m.Samples[0].Type)</th>
-        <th>@Html.DisplayNameFor(m => m.Samples[0].CollectedDate)</th>
-        <th>@Html.DisplayNameFor(m => m.Samples[0].Status)</th>
-        <th>Experiment</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model.Samples)
-    {
-        <tr>
-            <td>@item.SampleCode</td>
-            <td>@item.Type</td>
-            <td>@item.CollectedDate.ToString("yyyy-MM-dd")</td>
-            <td>@item.Status</td>
-            <td>@item.Experiment?.Title</td>
-            <td>
-                <a asp-page="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+@if (!Model.Samples.Any())
+{
+    <div class="empty-state">
+        <h4>Журнал пуст</h4>
+        <p class="mb-3">Зарегистрируйте образцы, чтобы отслеживать их статус и привязку к экспериментам.</p>
+        <a class="btn btn-primary" asp-page="Create">Добавить образец</a>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-lg-3 g-4">
+        @foreach (var sample in Model.Samples)
+        {
+            <div class="col">
+                <article class="entity-card h-100">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="page-kicker mb-1">Код образца</p>
+                            <h3 class="h5">@sample.SampleCode</h3>
+                        </div>
+                        <span class="badge bg-secondary">@sample.Status ?? "Не указан"</span>
+                    </div>
+                    <p class="entity-meta mb-1">Тип: <strong>@sample.Type ?? "—"</strong></p>
+                    <p class="entity-meta mb-1">Дата: @sample.CollectedDate:dd.MM.yyyy</p>
+                    <p class="entity-meta mb-3">
+                        Эксперимент: @sample.Experiment?.Title ?? "Не привязан"
+                    </p>
+                    <div class="mt-auto d-flex flex-wrap gap-2">
+                        <a class="btn btn-sm btn-outline-primary" asp-page="Details" asp-route-id="@sample.Id">Подробнее</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-page="Edit" asp-route-id="@sample.Id">Изменить</a>
+                        <a class="btn btn-sm btn-outline-danger" asp-page="Delete" asp-route-id="@sample.Id">Удалить</a>
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+}
 

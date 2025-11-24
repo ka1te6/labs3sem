@@ -1,10 +1,94 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Лаборатория";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Панель управления</p>
+        <h1 class="mb-2">Цифровой журнал лаборатории</h1>
+        <p class="text-muted">Быстрый доступ к экспериментам, исследователям и образцам.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-primary" asp-page="/Experiments/Create">Запланировать эксперимент</a>
+        <a class="btn btn-outline-secondary" asp-page="/Samples/Create">Добавить образец</a>
+    </div>
+</div>
+
+<section class="dashboard-grid mb-4">
+    <article class="stat-card">
+        <small>Эксперименты</small>
+        <h2>@Model.ExperimentsCount</h2>
+        <p class="text-muted mb-0">активные и завершенные исследования</p>
+    </article>
+    <article class="stat-card">
+        <small>Исследователи</small>
+        <h2>@Model.ResearchersCount</h2>
+        <p class="text-muted mb-0">участников команды</p>
+    </article>
+    <article class="stat-card">
+        <small>Образцы</small>
+        <h2>@Model.SamplesCount</h2>
+        <p class="text-muted mb-0">в актуальном каталоге</p>
+    </article>
+</section>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="entity-card h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Последний эксперимент</h5>
+                <a asp-page="/Experiments/Index" class="btn btn-sm btn-outline-primary">Все эксперименты</a>
+            </div>
+            @if (Model.LatestExperiment is not null)
+            {
+                <div class="mt-3">
+                    <h3 class="h5">@Model.LatestExperiment.Title</h3>
+                    <p class="text-muted">@Model.LatestExperiment.Description</p>
+                    <p class="entity-meta mb-1">
+                        Руководитель: <strong>@Model.LatestExperiment.PrincipalInvestigator?.FullName</strong>
+                    </p>
+                    <p class="entity-meta mb-0">
+                        Старт: @Model.LatestExperiment.StartDate:dd.MM.yyyy
+                        @if (Model.LatestExperiment.EndDate is not null)
+                        {
+                            <span> · Завершение: @Model.LatestExperiment.EndDate:dd.MM.yyyy</span>
+                        }
+                    </p>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mt-3 mb-0">Пока нет ни одного эксперимента.</p>
+            }
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="entity-card h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Последний образец</h5>
+                <a asp-page="/Samples/Index" class="btn btn-sm btn-outline-primary">Все образцы</a>
+            </div>
+            @if (Model.LatestSample is not null)
+            {
+                <div class="mt-3">
+                    <h3 class="h5">@Model.LatestSample.SampleCode</h3>
+                    <p class="entity-meta mb-1">
+                        Тип: <strong>@Model.LatestSample.Type ?? "—"</strong>
+                    </p>
+                    <p class="entity-meta mb-1">
+                        Статус: <span class="badge bg-secondary">@Model.LatestSample.Status ?? "Не указан"</span>
+                    </p>
+                    <p class="entity-meta mb-0">
+                        Эксперимент: @Model.LatestSample.Experiment?.Title ?? "—" · Дата: @Model.LatestSample.CollectedDate:dd.MM.yyyy
+                    </p>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mt-3 mb-0">Добавьте первый образец, чтобы вести журнал.</p>
+            }
+        </div>
+    </div>
 </div>
