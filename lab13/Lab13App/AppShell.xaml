@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Lab13App.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:Lab13App.Pages"
+    Title="Lab13App">
+
+    <TabBar>
+        <ShellContent
+            Title="Исследователи"
+            ContentTemplate="{DataTemplate pages:ResearchersPage}"
+            Route="ResearchersPage" />
+        <ShellContent
+            Title="Эксперименты"
+            ContentTemplate="{DataTemplate pages:ExperimentsPage}"
+            Route="ExperimentsPage" />
+        <ShellContent
+            Title="Образцы"
+            ContentTemplate="{DataTemplate pages:SamplesPage}"
+            Route="SamplesPage" />
+    </TabBar>
+
+</Shell>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Lab13App.Pages.SamplesPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:Lab13App.Models"
+    Title="Образцы">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="16" RowSpacing="16">
+        <VerticalStackLayout Spacing="8">
+            <Entry x:Name="CodeEntry" Placeholder="Код образца *" />
+            <Entry x:Name="TypeEntry" Placeholder="Тип" />
+            <Entry x:Name="StatusEntry" Placeholder="Статус" />
+            <DatePicker x:Name="CollectedDatePicker" />
+            <Picker
+                x:Name="ExperimentPicker"
+                Title="Эксперимент *"
+                ItemsSource="{Binding ExperimentOptions}"
+                ItemDisplayBinding="{Binding Title}" />
+        </VerticalStackLayout>
+
+        <HorizontalStackLayout Grid.Row="1" Spacing="8">
+            <Button Text="Сохранить" Clicked="OnSaveClicked" />
+            <Button Text="Удалить" Clicked="OnDeleteClicked" />
+            <Button Text="Очистить" Clicked="OnClearClicked" />
+        </HorizontalStackLayout>
+
+        <CollectionView
+            x:Name="SamplesCollection"
+            Grid.Row="2"
+            SelectionMode="Single"
+            SelectionChanged="OnSelectionChanged"
+            ItemsSource="{Binding Samples}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Sample">
+                    <Border
+                        Margin="0,4"
+                        Padding="8"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 8"
+                        BackgroundColor="{AppThemeBinding Light='#F3F4F6', Dark='#0F172A'}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding SampleCode}" FontAttributes="Bold" />
+                            <Label
+                                FontSize="12"
+                                Text="{Binding Experiment.Title, StringFormat='Эксперимент: {0}'}"
+                                TextColor="Gray" />
+                            <Label
+                                FontSize="12"
+                                Text="{Binding CollectedDate, StringFormat='Дата: {0:dd.MM.yyyy}'}"
+                                TextColor="Gray" />
+                            <Label FontSize="12" Text="{Binding Status}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label
+            Grid.Row="3"
+            x:Name="StatusLabel"
+            TextColor="Gray"
+            FontSize="12" />
+    </Grid>
+</ContentPage>
+
